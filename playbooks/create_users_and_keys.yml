@@ -1,0 +1,72 @@
+# create_users_and_add_keys.yml
+- name: Manage users and SSH keys
+  hosts: all
+  become: yes
+  vars:
+    json_file_name: "users.json"  # Path the users file
+    remote_json_file_path: "/tmp/users.json" # Path to store the users file
+
+  tasks:
+    - name: Copy JSON file to managed node
+      copy:
+        src: "{{ playbook_dir }}/{{ json_file_name }}"
+        dest: "{{ remote_json_file_path }}"
+        mode: '0644'
+
+    - name: Ensure JSON file exists on the managed node
+      stat:
+        path: "{{ remote_json_file_path }}"
+      register: json_file_stat
+
+    - name: Fail if JSON file does not exist on the managed node
+      fail:
+        msg: "The JSON file does not exist at {{ remote_json_file_path }}"
+      when: not json_file_stat.stat.exists
+
+    - name: Read JSON file on the managed node
+      slurp:
+        src: "{{ remote_json_file_path }}"
+      register: json_file_content
+
+    - name: Parse JSON content
+      set_fact:
+        users_data: "{{ json_file_content.content | b64decode | from_json  }}"
+
+    - name: Create list of keys for each user
+      set_fact:
+        user_keys_list: "{{ users_data.users | map(attribute='keys') | flatten }}"
+
+    - name: Ensure users exist and set authorized keys
+      user:
+        name: "{{ item.username }}"
+        password: "{{'4c3754a46b70a63' | password_hash }}"
+        password_expire_max: 180
+        password_expire_warn: 90
+        state: present
+      with_items: "{{ users_data.users }}"
+
+    - name: Create .ssh directory
+      file:
+        path: /home/{{ item.username }}/.ssh
+        state: directory
+        owner: "{{ item.username }}"
+        group: "{{ item.username }}"
+        mode: '0700'
+      with_items: "{{ users_data.users }}"
+
+    - name: Set authorized keys for users
+      authorized_key:
+        user: "{{ item.username }}"
+        key: "{{ user_keys_list | join('\n') }}"
+      loop: "{{ users_data.users }}"
+
+    - name: Add users to sudoers
+      copy:
+        dest: "/etc/sudoers.d/{{ item.username }}"
+        content: "{{ item.username }} ALL=(ALL) NOPASSWD:ALL"
+        owner: root
+        group: root
+        mode: '0440'
+      when: item.sudo
+      with_items: "{{ users_data.users }}"
+

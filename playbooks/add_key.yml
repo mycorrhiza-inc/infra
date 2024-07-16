@@ -1,0 +1,6 @@
+- name: Add ssh key for user
+  authorized_key:
+    user: "{{ user.username }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ user.keys }}"

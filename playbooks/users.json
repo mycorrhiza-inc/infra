@@ -1,0 +1,18 @@
+{
+  "users":  [
+    {
+      "username": "mirrir",
+      "sudo": true,
+      "keys": [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPkCS1Kf51bfGco61EgRRip+cfLye1kOKSyH/qlBYXsi"
+      ]
+    },
+    {
+      "username": "nicole",
+      "sudo": true,
+      "keys": [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot"
+      ]
+    }
+  ]
+}

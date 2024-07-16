@@ -1,0 +1,55 @@
+{
+  "ips": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        [
+          "object",
+          {
+            "commonrosebud": [
+              "object",
+              {
+                "public_ip": "string"
+              }
+            ],
+            "lonelyserpent": [
+              "object",
+              {
+                "public_ip": "string"
+              }
+            ],
+            "production": [
+              "object",
+              {
+                "public_ip": "string"
+              }
+            ],
+            "test": [
+              "object",
+              {
+                "public_ip": "string"
+              }
+            ]
+          }
+        ]
+      ]
+    ],
+    "value": [
+      {
+        "commonrosebud": {
+          "public_ip": "64.227.105.182"
+        },
+        "lonelyserpent": {
+          "public_ip": "143.110.227.83"
+        },
+        "production": {
+          "public_ip": "143.110.227.197"
+        },
+        "test": {
+          "public_ip": "64.227.105.200"
+        }
+      }
+    ]
+  }
+}

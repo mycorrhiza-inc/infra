@@ -1,0 +1,42 @@
+- hosts: all
+
+  vars:
+    repo_url: 'https://github.com/mycorrhizainc/kessler'
+
+  tasks:
+
+    - name: Install Git
+      dnf:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Clone specific branch
+      git:
+        repo: "{{ repo_url }}"
+        dest: /home/{{ ansible_user }}/kessler
+        version: "{{ branch_name }}"
+        force: yes
+
+    - name: Copy .env file
+      copy:
+        src: "{{ env_file }}"
+        dest: /home/{{ ansible_user }}/kessler/.env
+        mode: '0644'
+
+    # - name: Build and start Docker Compose
+    #   command: docker compose up -d
+    #   args:
+    #     chdir: /home/{{ ansible_user }}/kessler
