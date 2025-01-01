@@ -1,10 +1,15 @@
 set -euo pipefail
 
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+
+cd /mycorrhiza
 helm list
 
-cd / 
-mkdir mycorrhiza
-cd mycorrhiza
+
 git clone https://github.com/mycorrhiza-inc/kessler
 cd kessler
 git fetch --all

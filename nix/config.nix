@@ -4,15 +4,23 @@
     enable = true;
     settings.PasswordAuthentication = false;
   };
+
+  system.activationScripts.copyInitScript = lib.stringAfter [ "users" ] ''
+    mkdir -p /mycorrhiza/
+    cp ${../misc-setup.sh} /mycorrhiza/misc-setup.sh
+    chmod +x /mycorrhiza/misc-setup.sh
+    chown root:mycorrhiza /mycorrhiza -R
+    chmod 775 /mycorrhiza -R
+  '';
   users.users.mirri = {
     isNormalUser = true;
-    extraGroups  = [ "wheel" "networkmanager" ];
+    extraGroups  = [ "wheel" "networkmanager" "mycorrhiza" ];
     # TODO: If you could throw in your ssh key, set your shell that would be great!
     # shell = pkgs.fish;
   };
   users.users.nicole = {
     isNormalUser = true;
-    extraGroups  = [ "wheel" "networkmanager" ];
+    extraGroups  = [ "wheel" "networkmanager" "mycorrhiza" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot nicole@apiarist"
     ];
