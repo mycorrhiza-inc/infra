@@ -1,4 +1,4 @@
-# ./configuration.nix
+# ./config.nix
 { config, pkgs, lib, ... }: {
   services.openssh = {
     enable = true;
