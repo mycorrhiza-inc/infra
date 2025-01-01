@@ -17,6 +17,10 @@
     # You can switch to the system described in ./configuration with
     # `nixos-rebuild switch --flake .#hal9000`
     nixosConfigurations.hal9000 = inputs.nixpkgs.lib {
+      specialArgs = {
+        # remember "inherit x;" is the same as "x = x;"
+        inherit inputs; 
+      };
       system = "x86_64-linux";
       modules = [ ./nix/config.nix ./nix/iso-builder.nix ];
 
