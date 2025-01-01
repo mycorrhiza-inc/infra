@@ -1,21 +1,4 @@
 set -euo pipefail
-# Install utility packages to make debugging on the server easier.
-dnf install git fish tmux micro neovim btop wget -y
-chsh -s /usr/bin/fish
-# git clone https://github.com/LazyVim/starter ~/.config/nvim
-# rm -rf ~/.config/nvim/.git
-
-
-
-
-# Trying something different, k8s is seeminly hugely overkill, and all the interoperable components 
-# I feel could create a complexity nightmare, trying something a bit simpler with a regular k3s install 
-curl -sfL https://get.k3s.io | sh -
-
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
 
 helm list
 
