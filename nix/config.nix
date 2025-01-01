@@ -5,11 +5,13 @@
     settings.PasswordAuthentication = false;
   };
   users.users.mirri = {
+    isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" ];
     # TODO: If you could throw in your ssh key, set your shell that would be great!
     # shell = pkgs.fish;
   };
   users.users.nicole = {
+    isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot nicole@apiarist"
@@ -47,23 +49,29 @@
   services.k3s.extraFlags = toString [
     # "--debug" # Optionally add additional args to k3s
   ];
-  enviornment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
       helm
 
 
 
       git
-      fish
       micro
-      neovim
       btop
       wget
     ];
+  programs.git.enable = true;
+  programs.neovim = {
+    enable = true;
+    defaultEditor= true;
+  };
+  programs.fish = {
+    enable = true;
+  };
   programs.tmux = {
     enable = true;
     keyMode = "vi";
     extraConfig="set -g mouse on";
   };
 
-  system.stateVersion = "23.05"; # Never change this
+  system.stateVersion = "24.11"; # Never change this
 }
