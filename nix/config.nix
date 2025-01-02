@@ -4,6 +4,8 @@
     enable = true;
     settings.PasswordAuthentication = false;
   };
+  # Disable for testing, almost certainly a good idea to disable later for extra security.
+  networking.firewall.enable = false;
 
   system.activationScripts.copyInitScript = lib.stringAfter [ "users" ] ''
     mkdir -p /mycorrhiza/
