@@ -10,9 +10,8 @@
   system.activationScripts.copyInitScript = lib.stringAfter [ "users" ] ''
     mkdir -p /mycorrhiza/
     rm -rf /mycorrhiza/infra
-    cp -r ${../.} /mycorrhiza/
+    cp -r ${../.} /mycorrhiza/infra
     mkdir -p /mycorrhiza/infra/
-    chmod +x /mycorrhiza/misc-setup.sh
     chown root:mycorrhiza /mycorrhiza -R
     chmod 775 /mycorrhiza -R
   '';
