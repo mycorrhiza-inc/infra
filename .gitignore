@@ -1,2 +1,3 @@
 result
 helm/templates/secrets-1.yaml
+helm/templates/secrets.yaml
