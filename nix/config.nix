@@ -7,10 +7,18 @@
   # Disable for testing, almost certainly a good idea to disable later for extra security.
   networking.firewall.enable = false;
 
+  # TODO: Fix this hacky bullshit that preserves the secret config. Using a nixos specific secret management system, or even better a k8s native thing using something like h_____orp vault.
   system.activationScripts.copyInitScript = lib.stringAfter [ "users" ] ''
     mkdir -p /mycorrhiza/
+    if [ -f /mycorrhiza/infra/infra/secret.yaml ]; then
+      mv /mycorrhiza/infra/infra/secret.yaml /mycorrhiza/secret.yaml.tmp
+    fi
     rm -rf /mycorrhiza/infra
     cp -r ${../.} /mycorrhiza/infra
+    if [ -f /mycorrhiza/secret.yaml.tmp ]; then
+      mkdir -p /mycorrhiza/infra/infra
+      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/infra/secret.yaml
+    fi
     mkdir -p /mycorrhiza/infra/
     chown root:mycorrhiza /mycorrhiza -R
     chmod 775 /mycorrhiza -R
