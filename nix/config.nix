@@ -58,7 +58,7 @@
     # "--debug" # Optionally add additional args to k3s
   ];
   environment.systemPackages = with pkgs; [
-      helm
+      kubernetes-helm
 
 
 
