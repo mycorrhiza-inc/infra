@@ -40,10 +40,10 @@
   # You should always have some swap space,
   # This is even more important on VPSs
   # The swapfile will be created automatically.
-  swapDevices = [{
-    device = "/swap/swapfile";
-    size = 1024 * 2; # 2 GB
-  }];
+  # swapDevices = [{
+  #   device = "/swap/swapfile";
+  #   size = 1024 * 2; # 2 GB
+  # }];
   networking.firewall.allowedTCPPorts = [
     6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
     # 2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
