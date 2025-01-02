@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: kessler-ingress-http
   annotations:
-    kubernetes.io/ingress.class: traefik
+    spec.ingressClassName: traefik
   labels:
     app: kessler
   namespace: kessler

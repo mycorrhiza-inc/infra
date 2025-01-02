@@ -11,10 +11,7 @@ helm list
 
 
 git clone https://github.com/mycorrhiza-inc/kessler
-cd kessler
-git fetch --all
-# Temporary since I dont want to fuck up by pushing all this stuff to main.
-git switch improving-reliability-3
+# Change to the infra directory.
 
 # Install k8s dashboard
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
@@ -47,7 +44,8 @@ kubectl create namespace kessler
 
 
 # manually do some magic to copy k8s/secret.yml
-helm install kessler ./k8s -f k8s/values-prod.yaml --namespace kessler
+cd /mycorrhiza/infra
+# helm install kessler ./helm/ -f helm/values-prod.yaml --namespace kessler
 
 
 
