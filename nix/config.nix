@@ -44,6 +44,7 @@
   #   device = "/swap/swapfile";
   #   size = 1024 * 2; # 2 GB
   # }];
+  services.tailscale.enable = true;
   networking.firewall.allowedTCPPorts = [
     6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
     # 2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
@@ -57,14 +58,14 @@
   services.k3s.extraFlags = toString [
     # "--debug" # Optionally add additional args to k3s
   ];
+  # Necessary to get helm to interact with k3s and not check the default port for k8s
   environment.variables = {
     KUBECONFIG="/etc/rancher/k3s/k3s.yaml";
   };
   environment.systemPackages = with pkgs; [
+      # Kubernetes Packages
       kubernetes-helm
-
-
-
+      # Misc Nice to have Stuff 
       git
       micro
       btop
