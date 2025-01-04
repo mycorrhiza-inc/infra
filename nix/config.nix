@@ -8,26 +8,13 @@
   networking.firewall.enable = false;
 
   # TODO: Fix this hacky bullshit that preserves the secret config. Using a nixos specific secret management system, or even better a k8s native thing using something like h_____orp vault.
-  system.activationScripts.copyInitScript = lib.stringAfter [ "users" ] ''
-    mkdir -p /mycorrhiza/
-    if [ -f /mycorrhiza/infra/infra/helm/templates/secret.yaml ]; then
-      mv /mycorrhiza/infra/infra/helm/templates/secret.yaml /mycorrhiza/secret.yaml.tmp
-    fi
-    rm -rf /mycorrhiza/infra
-    cp -r ${../.} /mycorrhiza/infra
-    if [ -f /mycorrhiza/secret.yaml.tmp ]; then
-      mkdir -p /mycorrhiza/infra/infra
-      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/helm/templates/secret.yaml
-    fi
-    mkdir -p /mycorrhiza/infra/
-    chown root:mycorrhiza /mycorrhiza -R
-    chmod 775 /mycorrhiza -R
-  '';
   users.users.mirri = {
     isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" "mycorrhiza" ];
     # TODO: If you could throw in your ssh key, set your shell that would be great!
     # shell = pkgs.fish;
+    # You can also use zsh or whatever you want, if you would like to enable it write programs.zsh.enable = true;
+    # In general options documentation is availible here: https://search.nixos.org/options?channel=24.11
   };
   users.users.nicole = {
     isNormalUser = true;
@@ -35,6 +22,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot nicole@apiarist"
     ];
+    initialPassword = "changeme";
     shell = pkgs.fish;
   };
   users.users.root = {
@@ -42,19 +30,8 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot nicole@apiarist"
     ];
     shell = pkgs.fish;
-    # Altough optional, setting a root password allows you to
-    # open a terminal interface in DO's website.
-    # hashedPassword = 
-    #   "generate a hashed password with the mkpasswd command";
   };
 
-  # You should always have some swap space,
-  # This is even more important on VPSs
-  # The swapfile will be created automatically.
-  # swapDevices = [{
-  #   device = "/swap/swapfile";
-  #   size = 1024 * 2; # 2 GB
-  # }];
   services.tailscale.enable = true;
   networking.firewall.allowedTCPPorts = [
     6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
@@ -95,6 +72,29 @@
     keyMode = "vi";
     extraConfig="set -g mouse on";
   };
+  # You should always have some swap space,
+  # This is even more important on VPSs
+  # The swapfile will be created automatically.
+  # swapDevices = [{
+  #   device = "/swap/swapfile";
+  #   size = 1024 * 2; # 2 GB
+  # }];
+
+  system.activationScripts.copyInfrastructureScripts = lib.stringAfter [ "users" ] ''
+    mkdir -p /mycorrhiza/
+    if [ -f /mycorrhiza/infra/infra/helm/templates/secret.yaml ]; then
+      mv /mycorrhiza/infra/infra/helm/templates/secret.yaml /mycorrhiza/secret.yaml.tmp
+    fi
+    rm -rf /mycorrhiza/infra
+    cp -r ${../.} /mycorrhiza/infra
+    if [ -f /mycorrhiza/secret.yaml.tmp ]; then
+      mkdir -p /mycorrhiza/infra/infra
+      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/helm/templates/secret.yaml
+    fi
+    mkdir -p /mycorrhiza/infra/
+    chown root:mycorrhiza /mycorrhiza -R
+    chmod 775 /mycorrhiza -R
+  '';
 
   system.stateVersion = "24.11"; # Never change this
 }
