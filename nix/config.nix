@@ -17,7 +17,7 @@
     cp -r ${../.} /mycorrhiza/infra
     if [ -f /mycorrhiza/secret.yaml.tmp ]; then
       mkdir -p /mycorrhiza/infra/infra
-      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/infra/helm/templates/secret.yaml
+      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/helm/templates/secret.yaml
     fi
     mkdir -p /mycorrhiza/infra/
     chown root:mycorrhiza /mycorrhiza -R

@@ -16,7 +16,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kessler-frontend
+            name: kessler-frontend-service
             port:
               number: {{ .Values.frontend.port }}
   - host: {{ .Values.backend.domain }}
@@ -26,6 +26,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kessler-backend
+            name: kessler-backend-service
             port:
               number: {{ .Values.backend.port }}

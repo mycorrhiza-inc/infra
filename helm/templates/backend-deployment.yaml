@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kessler-backend
+  name: kessler-backend-deployment
   namespace: kessler
 spec:
   replicas: {{ .Values.backend.replicas }}
