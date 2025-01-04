@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: kessler-ingress-frontend
   annotations:
-    spec.ingressClassName: traefik
-    cert-manager.io/issuer: kessler-letsencrypt-issuer
+    cert-manager.io/cluter-issuer: kessler-letsencrypt-issuer
   labels:
     app: kessler
   namespace: {{.Values.namespace}}
 spec:
+  ingressClassName: traefik
   rules:
   - host: {{ .Values.frontend.domain }}
     http:
