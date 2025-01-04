@@ -4,7 +4,7 @@ metadata:
   name: kessler-frontend-service
 spec:
   selector:
-    app: kessler-frontend-deployment
+    app: frontend
   ports: 
     - protocol: TCP
       port: {{ .Values.frontend.port }}

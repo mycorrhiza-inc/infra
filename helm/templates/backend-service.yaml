@@ -4,7 +4,7 @@ metadata:
   name: kessler-backend-service
 spec:
   selector:
-    app: kessler-backend-deployment
+    app: backend
   ports:
     - protocol: TCP
       port: {{ .Values.backend.port }}
