@@ -1,9 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kessler-ingress-http
+  name: kessler-ingress-frontend
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
     cert-manager.io/issuer: kessler-letsencrypt-issuer
   labels:
     app: kessler
@@ -20,20 +20,7 @@ spec:
             name: kessler-frontend-service
             port:
               number: {{ .Values.frontend.port }}
-  - host: {{ .Values.backend.domain }}
-    http:
-      paths:
-      - path: /v2
-        pathType: Prefix
-        backend:
-          service:
-            name: kessler-backend-service
-            port:
-              number: {{ .Values.backend.port }}
   tls:
-  - hosts:
-    - {{ .Values.backend.domain }}
-    secretName: kessler-backend-cert
   - hosts:
     - {{ .Values.frontend.domain }}
     secretName: kessler-frontend-cert

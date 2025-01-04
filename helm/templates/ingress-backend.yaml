@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kessler-ingress-backend
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/issuer: kessler-letsencrypt-issuer
+  labels:
+    app: kessler
+  namespace: {{.Values.namespace}}
+spec:
+  rules:
+  - host: {{ .Values.backend.domain }}
+    http:
+      paths:
+      - path: /v2
+        pathType: Prefix
+        backend:
+          service:
+            name: kessler-backend-service
+            port:
+              number: {{ .Values.backend.port }}
+  tls:
+  - hosts:
+    - {{ .Values.backend.domain }}
+    secretName: kessler-backend-cert
