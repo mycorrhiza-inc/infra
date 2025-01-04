@@ -4,6 +4,7 @@ metadata:
   name: kessler-ingress-http
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/issuer: kessler-letsencrypt-issuer
   labels:
     app: kessler
   namespace: {{.Values.namespace}}
@@ -29,3 +30,9 @@ spec:
             name: kessler-backend-service
             port:
               number: {{ .Values.backend.port }}
+  tls:
+  - hosts:
+    - {{ .Values.frontend.domain }}
+    secretName: kessler-frontend-cert
+    - {{ .Values.backend.domain }}
+    secretName: kessler-frontend-cert

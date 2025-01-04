@@ -1,6 +1,6 @@
 config:
-  domain: "localhost"
-  apiUrl: "http://localhost"
+  domain: "k8s-kessler.kessler.xyz"
+  apiUrl: "https://k8s-kessler-api.kessler.xyz/"
 namespace: "kessler-prod"
 
 certManager:
