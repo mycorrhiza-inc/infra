@@ -40,12 +40,12 @@ kubectl create clusterrolebinding nicole-admin-binding \
 
 
 
-kubectl create namespace kessler
+kubectl create namespace kessler-prod
 
 
 # manually do some magic to copy k8s/secret.yml
 cd /mycorrhiza/infra
-# helm install kessler ./helm/ -f helm/values-prod.yaml --namespace kessler
+# helm install kessler ./helm/ -f helm/values-prod.yaml --namespace kessler-prod
 
 
 

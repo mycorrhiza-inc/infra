@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
   labels:
     app: kessler
-  namespace: kessler
+  namespace: {{.Values.namespace}}
 spec:
   rules:
   - host: {{ .Values.frontend.domain }}

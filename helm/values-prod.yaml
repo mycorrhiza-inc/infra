@@ -1,6 +1,7 @@
 config:
   domain: "localhost"
   apiUrl: "http://localhost"
+namespace: "kessler-prod"
 
 certManager:
   email: "mbright@kessler.xyz" # Replace with your email
