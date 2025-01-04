@@ -11,6 +11,8 @@
   users.users.mirri = {
     isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" "mycorrhiza" ];
+    initialPassword = "changeme";
+    openssh.authorizedKeys.keys = [];
     # TODO: If you could throw in your ssh key, set your shell that would be great!
     # shell = pkgs.fish;
     # You can also use zsh or whatever you want, if you would like to enable it write programs.zsh.enable = true;
