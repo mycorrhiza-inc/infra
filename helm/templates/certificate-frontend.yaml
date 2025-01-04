@@ -9,6 +9,6 @@ spec:
     name: kessler-letsencrypt-issuer
     kind: ClusterIssuer
   dnsNames:
-    - k8s-kessler.kessler.xyz
+    - {{ .Values.frontend.domain }}
   duration: 2160h # 90 days
   renewBefore: 360h # 15 days
