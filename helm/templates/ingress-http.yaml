@@ -32,6 +32,8 @@ spec:
               number: {{ .Values.backend.port }}
   tls:
   - hosts:
-    - {{ .Values.frontend.domain }}
     - {{ .Values.backend.domain }}
-    secretName: kessler-frontend-cert
+    secretName: kessler-cert
+  - hosts:
+    - {{ .Values.frontend.domain }}
+    secretName: kessler-cert

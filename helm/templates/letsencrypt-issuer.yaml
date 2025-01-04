@@ -9,3 +9,7 @@ spec:
     email: {{.Values.certManager.email}}
     privateKeySecretRef:
       name: kessler-letsencrypt-issuer-private-key
+    solvers:
+    - http01:
+        ingress:
+          class: traefik 
