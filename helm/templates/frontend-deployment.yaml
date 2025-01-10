@@ -41,10 +41,10 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 1
         volumeMounts:
-        - mountPath: /app/.env.local
+        - mountPath: /app/.env
           name: env-local
           readOnly: true
-          subPath: .env.local
+          subPath: .env
       volumes:
       - configMap:
           defaultMode: 420
