@@ -44,7 +44,11 @@ spec:
         - mountPath: /app/.env
           name: env-local
           readOnly: true
-          subPath: .env
+          subPath: .env.local
+        - mountPath: /app/.env.local
+          name: env-local
+          readOnly: true
+          subPath: .env.local
       volumes:
       - configMap:
           defaultMode: 420
