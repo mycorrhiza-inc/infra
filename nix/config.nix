@@ -12,9 +12,11 @@
     isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" "mycorrhiza" ];
     initialPassword = "changeme";
-    openssh.authorizedKeys.keys = [];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPkCS1Kf51bfGco61EgRRip+cfLye1kOKSyH/qlBYXsi marcusbrightxyz@gmail.com"
+    ];
     # TODO: If you could throw in your ssh key, set your shell that would be great!
-    # shell = pkgs.fish;
+    shell = pkgs.fish;
     # You can also use zsh or whatever you want, if you would like to enable it write programs.zsh.enable = true;
     # In general options documentation is availible here: https://search.nixos.org/options?channel=24.11
   };
@@ -30,6 +32,7 @@
   users.users.root = {
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdPzSlJ3TCzPy7R2s2OOBJbBb+U5NY8dwMlGH9wm4Ot nicole@apiarist"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPkCS1Kf51bfGco61EgRRip+cfLye1kOKSyH/qlBYXsi marcusbrightxyz@gmail.com"
     ];
     shell = pkgs.fish;
   };
