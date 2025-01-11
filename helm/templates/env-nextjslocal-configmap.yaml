@@ -5,8 +5,9 @@ metadata:
   namespace: {{.Values.namespace}}
 data:
   .env: |-
-    NEXT_PUBLIC_KESSLER_API_URL= {{ .Values.config.apiUrl }}
+    NEXT_PUBLIC_KESSLER_API_URL={{ .Values.config.apiUrl }}
+    INTERNAL_KESSLER_API_URL={{ .Values.config.apiUrl }}
     NEXT_PUBLIC_SUPABASE_URL=https://kpvkpczxcclxslabfzeu.supabase.co
-    NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwdmtwY3p4Y2NseHNsYWJmemV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwNTQzOTIsImV4cCI6MjA0MDYzMDM5Mn0.9kR-oYUM5SqjmteQbPE1w-ABX8-0sSGldGAGsegCHfs
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwdmtwY3p4Y2NseHNsYWJmemV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwNTQzOTIsImV4cCI6MjA0MDYzMDM5Mn0.9kR-oYUM5SqjmteQbPE1w-ABX8-0sSGldGAGsegCHfs
 
 
