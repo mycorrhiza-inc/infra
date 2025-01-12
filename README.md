@@ -26,7 +26,7 @@ nix-shell -p '(nixos{}).nixos-rebuild' --command "nixos-rebuild switch --flake .
 ```
 
 ```bash
-scp -r $(ls -d */ | grep -v "result") root@137.184.36.185:/mycorrhiza/infra
+rsync -av --exclude 'result' ./ root@k8s-kessler.kessler.xyz:/mycorrhiza/infra
 ```
 # Update System Packages 
 

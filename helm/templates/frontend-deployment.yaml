@@ -27,7 +27,8 @@ spec:
         command:
         - npm
         - run
-        - dev # changing to dev to test why npm run start isnt incorperating the .env files.
+        - start
+        {{/* - dev # changing to dev to test why npm run start isnt incorperating the .env files. */}}
         envFrom:
         - configMapRef:
             name: kessler-public-config
