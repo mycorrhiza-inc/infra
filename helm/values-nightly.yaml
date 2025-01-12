@@ -1,22 +1,22 @@
 config:
-  domain: "kessler.xyz"
-  apiUrl: "https://api.kessler.xyz/"
-namespace: "kessler-prod"
+  domain: "nightly.kessler.xyz"
+  apiUrl: "https://nightly-api.kessler.xyz/"
+namespace: "kessler-nightly"
 
 certManager:
   email: "mbright@kessler.xyz" # Replace with your email
 frontend:
   image:
     repository: fractalhuman1/kessler-frontend
-    tag: latest
+    tag: nightly
   replicas: 1
-  domain: kessler.xyz
+  domain: nightly.kessler.xyz
   port: 3000
 
 backend:
   image:
     repository: fractalhuman1/kessler-backend-go
-    tag: latest
+    tag: nightly
   replicas: 1
-  domain: api.kessler.xyz
+  domain: nightly-api.kessler.xyz
   port: 4041
