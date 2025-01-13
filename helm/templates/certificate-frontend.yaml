@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: kessler-frontend-cert
-  namespace: kessler-prod
+  namespace: {{.Values.namespace}}
 spec:
   secretName: kessler-frontend-cert
   issuerRef:
