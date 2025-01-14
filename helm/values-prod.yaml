@@ -1,6 +1,6 @@
 config:
   domain: "kessler.xyz"
-  apiUrl: "https://api.kessler.xyz/"
+  apiUrl: "https://api.kessler.xyz"
 namespace: "kessler-prod"
 
 certManager:

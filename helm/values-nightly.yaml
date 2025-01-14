@@ -1,6 +1,6 @@
 config:
   domain: "nightly.kessler.xyz"
-  apiUrl: "https://nightly-api.kessler.xyz/"
+  apiUrl: "https://nightly-api.kessler.xyz"
 namespace: "kessler-nightly"
 
 certManager:
