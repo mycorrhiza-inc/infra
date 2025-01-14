@@ -4,13 +4,17 @@ metadata:
   name: kessler-public-config
   namespace: {{.Values.namespace}}
 data:
-  DOMAIN: {{ .Values.config.domain | quote }}
+  DOMAIN: {{ .Values.config.domain  }}
+  PUBLIC_KESSLER_API_URL: {{ .Values.config.apiUrl}}
+  INTERNAL_KESSLER_API_URL: {{ .Values.config.apiUrl }}
+
+  PUBLIC_POSTHOG_KEY: phc_cVPgPQClX1eOAqljibZU4udCoBngUHXuS8mUb0UGxyX
+  PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
+
   QUICKWIT_ENDPOINT: "http://quickwit-main.tail4a273.ts.net:7280"
   MARKER_ENDPOINT_URL: "http://uttu-fedora:2718"
   GPU_COMPUTE_URL: "http://uttu-fedora:6000"
   TMPDIR: "/tmp/"
-  NEXT_PUBLIC_KESSLER_API_URL: {{ .Values.config.apiUrl}}
-  INTERNAL_KESSLER_API_URL: {{ .Values.config.apiUrl }}
   NEXT_PUBLIC_SUPABASE_URL: "https://kpvkpczxcclxslabfzeu.supabase.co"
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwdmtwY3p4Y2NseHNsYWJmemV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwNTQzOTIsImV4cCI6MjA0MDYzMDM5Mn0.9kR-oYUM5SqjmteQbPE1w-ABX8-0sSGldGAGsegCHfs"
 
