@@ -4,6 +4,7 @@ metadata:
   name: kessler-public-config
   namespace: {{.Values.namespace}}
 data:
+  VERSION_HASH: {{ .Values.versionHash | default "unknown" }}
   DOMAIN: {{ .Values.config.domain  }}
   PUBLIC_KESSLER_API_URL: {{ .Values.config.apiUrl}}
   INTERNAL_KESSLER_API_URL: {{ .Values.config.apiUrl }}
