@@ -6,6 +6,7 @@
 
   # Use more aggressive compression then the default.
   virtualisation.digitalOceanImage.compressionMethod = "bzip2";
+  services.do-agent.enable = true;
   
   # ...
 }
