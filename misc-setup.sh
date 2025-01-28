@@ -14,16 +14,49 @@ git clone https://github.com/mycorrhiza-inc/kessler
 # Change to the infra directory.
 
 # Install k8s dashboard
+# Add kubernetes dashboard repository
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-helm install testing-dashboard kubernetes-dashboard/kubernetes-dashboard
-# To make acessible publicly
-# kubectl -n default port-forward svc/testing-dashboard-kong-proxy 8443:443 --address 0.0.0.0
 
-# Create a service account with cluster-admin privileges
+# Install dashboard with skip login enabled
+cat <<EOF > dashboard-values.yaml
+extraArgs:
+  - --enable-skip-login
+  - --enable-insecure-login
+  - --disable-settings-authorizer
+service:
+  type: NodePort
+EOF
+
+helm install testing-dashboard kubernetes-dashboard/kubernetes-dashboard -f dashboard-values.yaml
+
+# Create dashboard admin access
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-admin
+  labels:
+    k8s-app: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: default
+EOF
+
+# Create service account with cluster-admin privileges
 kubectl create serviceaccount nicole -n default
 kubectl create clusterrolebinding nicole-admin-binding \
     --clusterrole=cluster-admin \
     --serviceaccount=default:nicole
+
+# To access dashboard:
+echo "Access dashboard using:"
+echo "kubectl port-forward svc/testing-dashboard-kubernetes-dashboard 8443:443 --address 0.0.0.0"
+echo "Then visit https://your-server-ip:8443"
 
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
@@ -41,6 +74,7 @@ helm install cert-manager jetstack/cert-manager --namespace cert-manager --versi
 
 
 kubectl create namespace kessler-prod
+kubectl create namespace kessler-nightly
 
 
 # manually do some magic to copy k8s/secret.yml
