@@ -45,7 +45,7 @@ kubectl create namespace kessler-prod
 
 # manually do some magic to copy k8s/secret.yml
 cd /mycorrhiza/infra
-helm install kessler ./helm/ -f helm/values-prod.yaml
+helm install kessler-nightly ./helm/ -f helm/values-nightly.yaml
 
 
 

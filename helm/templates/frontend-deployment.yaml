@@ -38,6 +38,12 @@ spec:
           httpGet:
             path: /
             port: {{ .Values.frontend.port }}
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.frontend.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
