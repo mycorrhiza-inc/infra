@@ -93,7 +93,6 @@
       cp "$file" "$target"
     done
     rm -rf /mycorrhiza/infra_temp
-    chown root:mycorrhiza /mycorrhiza -R
     chmod 775 /mycorrhiza -R
   '';
 
