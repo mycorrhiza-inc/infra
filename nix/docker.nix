@@ -1,5 +1,18 @@
 { config, pkgs, lib, ... }: {
-  virtualisation.containers.enable = true;
+  virtualisation.containers =  {
+    enable = true;
+    registries.search = [
+      "docker.io"
+    ];
+    policy = {
+      default = [ { type = "insecureAcceptAnything"; } ];
+      transports = {
+        docker-daemon = {
+          "" = [ { type = "insecureAcceptAnything"; } ];
+        };
+      };
+    };
+  };
   virtualisation.podman = {
     enable = true;
 
