@@ -20,7 +20,7 @@
         inherit inputs; 
       };
       system = "x86_64-linux";
-      modules = [ ./nix/config.nix ./nix/iso-builder.nix ];
+      modules = [ ./nix/config.nix ./nix/iso-builder.nix ./nix/k3s.nix ];
 
 
     };
@@ -30,7 +30,7 @@
         inherit inputs; 
       };
       system = "x86_64-linux";
-      modules = [ ./nix/config.nix ./nix/iso-builder.nix ];
+      modules = [ ./nix/config.nix ./nix/iso-builder.nix ./nix/docker.nix ];
 
 
     };
