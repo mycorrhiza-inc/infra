@@ -80,21 +80,13 @@
   #   size = 1024 * 2; # 2 GB
   # }];
 
-  system.activationScripts.copyInfrastructureScripts = lib.stringAfter [ "users" ] ''
-    mkdir -p /mycorrhiza/
-    cp -r ${../.} /mycorrhiza/infra_temp
-    cd /mycorrhiza/infra_temp
-    find . -type f | while read file; do
-      target="/mycorrhiza/infra/$file"
-      mkdir -p "$(dirname "$target")"
-      if [ -f "$target" ]; then
-        rm "$target"
-      fi
-      cp "$file" "$target"
-    done
-    rm -rf /mycorrhiza/infra_temp
-    chmod 775 /mycorrhiza -R
-  '';
+  environment.etc = {
+    infra-configuration  = {
+      enable = true;
+      target = "infra";
+      source = ../.;
+    };
+  };
 
   system.stateVersion = "24.11"; # Never change this
 }
