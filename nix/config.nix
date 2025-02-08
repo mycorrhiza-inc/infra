@@ -82,16 +82,17 @@
 
   system.activationScripts.copyInfrastructureScripts = lib.stringAfter [ "users" ] ''
     mkdir -p /mycorrhiza/
-    if [ -f /mycorrhiza/infra/infra/helm/templates/secret.yaml ]; then
-      mv /mycorrhiza/infra/infra/helm/templates/secret.yaml /mycorrhiza/secret.yaml.tmp
-    fi
-    rm -rf /mycorrhiza/infra
-    cp -r ${../.} /mycorrhiza/infra
-    if [ -f /mycorrhiza/secret.yaml.tmp ]; then
-      mkdir -p /mycorrhiza/infra/infra
-      mv /mycorrhiza/secret.yaml.tmp /mycorrhiza/infra/helm/templates/secret.yaml
-    fi
-    mkdir -p /mycorrhiza/infra/
+    cp -r ${../.} /mycorrhiza/infra_temp
+    cd /mycorrhiza/infra_temp
+    find . -type f | while read file; do
+      target="/mycorrhiza/infra/$file"
+      mkdir -p "$(dirname "$target")"
+      if [ -f "$target" ]; then
+        rm "$target"
+      fi
+      cp "$file" "$target"
+    done
+    rm -rf /mycorrhiza/infra_temp
     chown root:mycorrhiza /mycorrhiza -R
     chmod 775 /mycorrhiza -R
   '';
