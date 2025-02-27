@@ -58,6 +58,7 @@
       micro
       btop
       wget
+      python313
     ];
   programs.git.enable = true;
   programs.neovim = {
