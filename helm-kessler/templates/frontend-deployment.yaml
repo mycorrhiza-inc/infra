@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kessler-frontend-deployment
+  namespace: {{.Values.namespace}}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.versionHash | default "latest" }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.frontend.port }}
+        command:
+        - npm
+        - run
+        - start
+        {{/* - dev # changing to dev to test why npm run start isnt incorperating the .env files. */}}
+        envFrom:
+        - configMapRef:
+            name: kessler-public-config
+        - secretRef:
+            name: kessler-private-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.frontend.port }}
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.frontend.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 5

@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kessler-backend-cert
+  namespace: {{.Values.namespace}}
+spec:
+  secretName: kessler-backend-cert
+  issuerRef:
+    name: kessler-letsencrypt-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.backend.domain }}
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days

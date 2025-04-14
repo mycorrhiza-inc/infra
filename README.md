@@ -1,57 +1,37 @@
-# Kessler Infrastructure
+# Get Started 
+Install Nix, using instructions here: https://nixos.org/download/ or just run the command:
+```bash 
+sh <(curl -L https://nixos.org/nix/install)
+```
+on mac or linux.
+# Build the image 
+Run the following command.
+```bash 
+nix build .#nixosConfigurations.hal9000.config.system.build.digitalOceanImage
+```
+The output image should be visible in results/
 
-Terraform managed infrastructure for the kessler environments.
+# Updating an already built computer.
 
-# Getting Up and Running
+run the following bash command:
+```bash
+nix-shell -p '(nixos{}).nixos-rebuild' --command "nixos-rebuild switch --flake .#hal9000 --target-host root@<IP_ADDRESS_OF_COMPUTER>"
+```
+This is wrapped in a nix-shell since nixos-rebuild is only really availible on nixos computers, but wrapping it lets you run it on any computer you can install nix on.
 
-## Install Terraform
-
-
-## Digital Ocean Access Token
-You will need to have a Digital Ocean Access Token which you can create from [here](https://cloud.digitalocean.com/account/api/tokens).
-
-Next, in your terminal you will need to export it 
+In the case of the current k8s project the command is
 
 ```bash
-export DO_PAT="{YOUR_ACCESS_TOKEN}"
+nix-shell -p '(nixos{}).nixos-rebuild' --command "nixos-rebuild switch --flake .#hal9000 --target-host root@137.184.36.185"
 ```
 
-for repeated use, add this to your shell's environement `rc` file.
-
-## SSH Keys
-
-You will need to have an ssh key for running Terraform remotely.
-
-1. Create a new ssh key.
-2. Add the ssh public key to your Digital Ocean account [here](https://cloud.digitalocean.com/account/security). Name it `terraform`.
-
-NOTICE: Whenever you rotate this key in Digital Ocean, update the name.
-
-# Running Terraform 
-
-## Building A Single Instance
-terraform destroy 
-
-
-To build a single instance, first plan the build:
 ```bash
-terraform plan \
--target="module.instances['lonelyserpent']" \
--var "do_token=${DO_PAT}" \
--var "pvt_key=$HOME/.ssh/{YOUR_TERRAFORM_KEY_NAME}"
+rsync -av --exclude 'result' ./ root@k8s-kessler.kessler.xyz:/mycorrhiza/infra
 ```
+# Update System Packages 
 
-then apply the build:
+run 
 ```bash
-terraform apply -target="module.instances['{INSTANCE_NAME}']" \
--var "do_token=${DO_PAT}" \
--var "pvt_key=$HOME/.ssh/{YOUR_TERRAFORM_KEY_NAME}"
+nix flake update --commit-lock file
 ```
-
-and finally to destroy that instance:
-```bash
-terraform destroy -target="module.instances['{INSTANCE_NAME}']" \
--var "do_token=${DO_PAT}" \
--var "pvt_key=$HOME/.ssh/{YOUR_TERRAFORM_KEY_NAME}"
-
-```
+then push the changes and update existing systems with the commands above.

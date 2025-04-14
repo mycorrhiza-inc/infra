@@ -1,0 +1,21 @@
+
+[sources.docker_logs]
+  type = "file"
+  path = "/var/lib/docker/containers/%3Ccontainer_id%3E/%3Ccontainer_id%3E-json.log"
+  format = "json"
+  # Include more configurations as needed
+
+[generators ]
+  # Add any generators if needed
+
+[sinks.otlp_sink]
+  type = "otlp"
+  protocol = "grpc"
+  endpoint = "logging-nixos-docker.tail4a273.ts.net:4317"
+
+  # Optional: Authentication and other settings
+  # insecure = true
+  # headers = { "Key" = "Value" }
+  # compression = "gzip"
+
+  inputs = ["docker_logs"]

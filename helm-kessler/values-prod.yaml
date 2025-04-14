@@ -1,0 +1,20 @@
+config:
+  domain: "kessler.xyz"
+  apiUrl: "https://api.kessler.xyz"
+namespace: "kessler-prod"
+
+certManager:
+  email: "mbright@kessler.xyz" # Replace with your email
+frontend:
+  image:
+    repository: fractalhuman1/kessler-frontend
+  replicas: 1
+  domain: kessler.xyz
+  port: 3000
+
+backend:
+  image:
+    repository: fractalhuman1/kessler-backend-go
+  replicas: 1
+  domain: api.kessler.xyz
+  port: 4041
