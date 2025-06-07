@@ -14,55 +14,10 @@ Could you go ahead and in this rust project make a simple templated out admin da
 
     anyhow: turn any error into an AppError returning: “Internal Server Error”
 
-    maud: templating html, can split fragments into functions in a single file (LoB)
+    askama: templating html
 
+In the repo is already an implementation of axum-login using sqlite as a backend. I would keep that and try to transform the repo into an htmx admin dashboard.
 
-for context here is how maud goes ahead and generates html using an html! macro:
-
-```rs
-html! {
-    ul {
-        li {
-            a href="about:blank" { "Apple Bloom" }
-        }
-        li class="lower-middle" {
-            "Sweetie Belle"
-        }
-        li dir="rtl" {
-            "Scootaloo "
-            small { "(also a chicken)" }
-        }
-    }
-}
-```
-
-
-Axum support is available with the "axum" feature for the crate
-
-
-This adds an implementation of IntoResponse for Markup/PreEscaped<String>. This then allows you to use it directly as a response!
-
-```rs
-use maud::{html, Markup};
-use axum::{Router, routing::get};
-
-async fn hello_world() -> Markup {
-    html! {
-        h1 { "Hello, World!" }
-    }
-}
-
-#[tokio::main]
-async fn main() {
-    // build our application with a single route
-    let app = Router::new().route("/", get(hello_world));
-
-    // run it with hyper on localhost:3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-
-    axum::serve(listener, app.into_make_service()).await.unwrap();
-}
-```
 
 
 # Axum HTMX examples:
@@ -160,3 +115,4 @@ fn router_two() -> Router {
         .layer(HxRequestGuardLayer::new("/redirect-to-this-route"))
 }
 ```
+
