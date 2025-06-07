@@ -1,3 +1,5 @@
+use axum;
+use axum::{Router, routing::get};
 use axum_login::{
     login_required,
     tower_sessions::{ExpiredDeletion, Expiry, SessionManagerLayer},
@@ -12,7 +14,7 @@ use tower_sessions_sqlx_store::SqliteStore;
 
 use crate::{
     users::Backend,
-    web::{auth, protected},
+    web::{auth, protected, admin},
 };
 
 pub struct App {
@@ -56,7 +58,9 @@ impl App {
         let backend = Backend::new(self.db);
         let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
 
-        let app = protected::router()
+        let app = Router::new()
+            .route("/admin", get(admin::get::admin))
+            .merge(protected::router())
             .route_layer(login_required!(Backend, login_url = "/login"))
             .merge(auth::router())
             .layer(MessagesManagerLayer)
