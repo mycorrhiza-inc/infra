@@ -9,6 +9,7 @@ pub struct UserInfo {
 }
 
 /// Renders the base HTML layout with a title and content.
+///
 pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
     html! {
         (DOCTYPE)
@@ -19,49 +20,74 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                 title { (global_info.title) }
                 link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5";
                 script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";
-                script src="https://unpkg.com/htmx.org@2.0.4" {}
+                script src="https://unpkg.com/htmx.org@2.0.4";
             }
-            body {
-                nav.navbar.navbar-expand-lg.bg-light {
-                    div.container-fluid {
-                        a.navbar-brand href="/" { "Dashboard" }
-                        div.collapse.navbar-collapse {
-                            ul.navbar-nav.me-auto.mb-2.mb-lg-0 {
-                                @if let Some(_) = global_info.user_info {
-                                    li.nav-item { a.nav-link href="/" { "Admin" } }
-                                    li.nav-item { a.nav-link href="/logout" { "Logout" } }
-                                } @else {
-                                    li.nav-item { a.nav-link href="/signup" { "Sign Up" } }
-                                    li.nav-item { a.nav-link href="/login" { "Sign In" } }
-                                }
-                            }
+            body class="min-h-screen bg-base-200" {
+                nav class="navbar bg-base-100 shadow-lg" {
+                    div class="navbar-start" {
+                        a href="/" class="btn btn-ghost text-xl" { "Dashboard" }
+                    }
+                    div class="navbar-end" {
+                        @if let Some(_) = global_info.user_info {
+                            a href="/" class="btn btn-ghost" { "Admin" }
+                            a href="/logout" class="btn btn-ghost" { "Logout" }
+                        } @else {
+                            a href="/signup" class="btn btn-ghost" { "Sign Up" }
+                            a href="/login" class="btn btn-ghost" { "Sign In" }
                         }
                     }
                 }
-                div.container.mt-4 {
+                main class="container mx-auto p-4" {
                     (content)
                 }
-
             }
         }
     }
 }
 
-/// Renders the full admin dashboard page.
-pub fn admin_full(info: &GlobalInfo) -> Markup {
-    base(info, admin_partial(info))
-}
-
-/// Renders only the admin dashboard content for HTMX partial updates.
 pub fn admin_partial(info: &GlobalInfo) -> Markup {
     let username = &info.user_info.as_ref().unwrap().username;
     html! {
-        h1 { "Welcome, " (username) "!" }
-        p { "This is the admin dashboard content (partial)." }
+        div class="space-y-6" {
+            div class="flex items-center justify-between" {
+                h1 class="text-3xl font-bold" { "Welcome, " (username) "!" }
+            }
+
+            div class="grid grid-cols-1 md:grid-cols-3 gap-4" {
+                div class="card bg-base-100 shadow" {
+                    div class="card-body" {
+                        h2 class="card-title" { "Recent Activity" }
+                        ul class="space-y-2" {
+                            li { "User login: 5 minutes ago" }
+                            li { "Settings updated" }
+                            li { "New user registered" }
+                        }
+                    }
+                }
+
+                div class="card bg-base-100 shadow" {
+                    div class="card-body" {
+                        h2 class="card-title" { "System Health" }
+                        div class="radial-progress text-success" style="--value:85;" { "85%" }
+                        p class="text-sm" { "All systems operational" }
+                    }
+                }
+
+                div class="card bg-base-100 shadow" {
+                    div class="card-body" {
+                        h2 class="card-title" { "Quick Actions" }
+                        div class="flex flex-col gap-2" {
+                            button class="btn btn-primary" { "Create New User" }
+                            button class="btn btn-secondary" { "View Logs" }
+                            button class="btn btn-accent" { "System Settings" }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-/// Renders the login page.
 pub fn login(next: Option<&str>) -> Markup {
     let info = GlobalInfo {
         title: "Login".to_string(),
@@ -70,23 +96,33 @@ pub fn login(next: Option<&str>) -> Markup {
     base(
         &info,
         html! {
-                form method="post" {
-                    fieldset {
-                        legend { "User login" }
-                        p {
-                            label for="username" { "Username" }
-                            input name="username" id="username" value="ferris";
+            div class="card w-96 mx-auto bg-base-100 shadow-xl" {
+                div class="card-body" {
+                    h2 class="card-title" { "User Login" }
+                    form method="post" class="space-y-4" {
+                        div class="form-control" {
+                            label class="label" for="username" {
+                                span class="label-text" { "Username" }
+                            }
+                            input type="text" name="username" id="username"
+                                class="input input-bordered" required value="ferris";
                         }
-                        p {
-                            label for="password" { "Password" }
-                            input type="password" name="password" id="password" value="hunter42";
+                        div class="form-control" {
+                            label class="label" for="password" {
+                                span class="label-text" { "Password" }
+                            }
+                            input type="password" name="password" id="password"
+                                class="input input-bordered" required value="hunter42";
                         }
-                    }
-                    input type="submit" value="login";
-                    @if let Some(next_val) = next {
-                        input type="hidden" name="next" value=(next_val);
+                        div class="form-control mt-6" {
+                            input type="submit" value="Login" class="btn btn-primary";
+                        }
+                        @if let Some(next_val) = next {
+                            input type="hidden" name="next" value=(next_val);
+                        }
                     }
                 }
+            }
         },
     )
 }
