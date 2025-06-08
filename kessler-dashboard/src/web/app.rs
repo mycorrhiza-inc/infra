@@ -2,9 +2,7 @@ use crate::{
     users::Backend,
     web::{admin, auth},
 };
-use axum;
 use axum::{Router, routing::get};
-use axum_htmx::AutoVaryLayer;
 use axum_login::{
     AuthManagerLayerBuilder, login_required,
     tower_sessions::{ExpiredDeletion, Expiry, SessionManagerLayer},

@@ -2,14 +2,9 @@ use crate::{
     users::AuthSession,
     web::templates::{self, GlobalInfo, UserInfo},
 };
-use axum::{Router, response::IntoResponse, routing::get};
+use axum::response::IntoResponse;
 use axum_htmx::HxBoosted;
 use http::StatusCode;
-
-/// Mount the /admin route
-pub fn router() -> Router<()> {
-    Router::new().route("/admin", get(admin))
-}
 
 pub async fn admin(HxBoosted(boosted): HxBoosted, auth_session: AuthSession) -> impl IntoResponse {
     match auth_session.user {

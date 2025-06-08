@@ -1,4 +1,4 @@
-use maud::{DOCTYPE, Markup, PreEscaped, html};
+use maud::{DOCTYPE, Markup, html};
 pub struct GlobalInfo {
     pub title: String,
     pub user_info: Option<UserInfo>,
@@ -17,7 +17,9 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                 meta charset="UTF-8";
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 title { (global_info.title) }
-                link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
+                link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5";
+                script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";
+                script src="https://unpkg.com/htmx.org@2.0.4" {}
             }
             body {
                 nav.navbar.navbar-expand-lg.bg-light {
@@ -39,7 +41,7 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                 div.container.mt-4 {
                     (content)
                 }
-                script src="https://unpkg.com/htmx.org@1.9.2" {}
+
             }
         }
     }
