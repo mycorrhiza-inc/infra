@@ -1,24 +1,22 @@
-use maud::{Markup, PreEscaped, html};
-
+use maud::{DOCTYPE, Markup, PreEscaped, html};
 pub struct GlobalInfo {
-    user_info: Option<UserInfo>,
+    pub title: String,
+    pub user_info: Option<UserInfo>,
 }
 
 pub struct UserInfo {
-    username: String,
+    pub username: String,
 }
 
-const PAGE_TITLE: &str = "Kessler Dashboard";
-
 /// Renders the base HTML layout with a title and content.
-pub fn base(global_info: GlobalInfo, content: Markup) -> Markup {
+pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
     html! {
-        (PreEscaped("<!DOCTYPE html>"))
+        (DOCTYPE)
         html lang="en" {
             head {
                 meta charset="UTF-8";
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
-                title { (PAGE_TITLE) }
+                title { (global_info.title) }
                 link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
             }
             body {
@@ -27,8 +25,13 @@ pub fn base(global_info: GlobalInfo, content: Markup) -> Markup {
                         a.navbar-brand href="/" { "Dashboard" }
                         div.collapse.navbar-collapse {
                             ul.navbar-nav.me-auto.mb-2.mb-lg-0 {
-                                li.nav-item { a.nav-link href="/" { "Admin" } }
-                                li.nav-item { a.nav-link href="/logout" { "Logout" } }
+                                @if let Some(_) = global_info.user_info {
+                                    li.nav-item { a.nav-link href="/" { "Admin" } }
+                                    li.nav-item { a.nav-link href="/logout" { "Logout" } }
+                                } @else {
+                                    li.nav-item { a.nav-link href="/signup" { "Sign Up" } }
+                                    li.nav-item { a.nav-link href="/login" { "Sign In" } }
+                                }
                             }
                         }
                     }
@@ -43,17 +46,13 @@ pub fn base(global_info: GlobalInfo, content: Markup) -> Markup {
 }
 
 /// Renders the full admin dashboard page.
-pub fn admin_full(username: &str) -> Markup {
-    base(
-        "Admin Dashboard",
-        html! {
-            (admin_partial(username))
-        },
-    )
+pub fn admin_full(info: &GlobalInfo) -> Markup {
+    base(info, admin_partial(info))
 }
 
 /// Renders only the admin dashboard content for HTMX partial updates.
-pub fn admin_partial(username: &str) -> Markup {
+pub fn admin_partial(info: &GlobalInfo) -> Markup {
+    let username = &info.user_info.as_ref().unwrap().username;
     html! {
         h1 { "Welcome, " (username) "!" }
         p { "This is the admin dashboard content (partial)." }
@@ -61,22 +60,14 @@ pub fn admin_partial(username: &str) -> Markup {
 }
 
 /// Renders the login page.
-pub fn login(messages: &[String], next: &Option<String>) -> Markup {
-    html! {
-        (PreEscaped("<!DOCTYPE html>"))
-        html {
-            head {
-                title { "Login" }
-                style { "label { display: block; margin-bottom: 5px; }" }
-            }
-            body {
-                ul {
-                    @for message in messages {
-                        li {
-                            span { strong { (message) } }
-                        }
-                    }
-                }
+pub fn login(next: Option<&str>) -> Markup {
+    let info = GlobalInfo {
+        title: "Login".to_string(),
+        user_info: None,
+    };
+    base(
+        &info,
+        html! {
                 form method="post" {
                     fieldset {
                         legend { "User login" }
@@ -94,7 +85,6 @@ pub fn login(messages: &[String], next: &Option<String>) -> Markup {
                         input type="hidden" name="next" value=(next_val);
                     }
                 }
-            }
-        }
-    }
+        },
+    )
 }

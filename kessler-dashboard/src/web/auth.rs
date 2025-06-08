@@ -1,9 +1,9 @@
 use axum::{
+    Form, Router,
     extract::Query,
     http::StatusCode,
     response::{Html, IntoResponse, Redirect},
     routing::{get, post},
-    Form, Router,
 };
 use axum_messages::{Message, Messages};
 use serde::Deserialize;
@@ -71,9 +71,12 @@ mod get {
         Query(NextUrl { next }): Query<NextUrl>,
     ) -> Html<String> {
         // Convert messages to Vec<String>
-        let msgs: Vec<String> = messages.into_iter().map(|m: Message| m.to_string()).collect();
+        let msgs: Vec<String> = messages
+            .into_iter()
+            .map(|m: Message| m.to_string())
+            .collect();
         // Render template
-        let markup = templates::login(&msgs, &next);
+        let markup = templates::login(next.as_deref());
         Html(markup.into_string())
     }
 
