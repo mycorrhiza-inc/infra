@@ -1,7 +1,6 @@
-use crate::{
-    users::Backend,
-    web::{admin, auth},
-};
+use crate::app::admin;
+use crate::app::admin;
+use crate::app::auth;
 use axum::{Router, routing::get};
 use axum_login::{
     AuthManagerLayerBuilder, login_required,

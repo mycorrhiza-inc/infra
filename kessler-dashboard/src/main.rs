@@ -6,10 +6,12 @@
 use tracing::info;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::web::App;
+use crate::app::App;
 
-mod users;
-mod web;
+mod app;
+mod components;
+mod lib;
+mod users; // re-export of users for backwards compatibility if needed
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -9,7 +9,7 @@ use axum_messages::{Message, Messages};
 use serde::Deserialize;
 
 use crate::users::{AuthSession, Credentials};
-use crate::web::templates;
+use crate::components::templates;
 
 // This allows us to extract the "next" field from the query string. We use this
 // to redirect after log in.
