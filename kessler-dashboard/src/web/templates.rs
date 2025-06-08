@@ -1,14 +1,24 @@
-use maud::{html, Markup, PreEscaped};
+use maud::{Markup, PreEscaped, html};
+
+pub struct GlobalInfo {
+    user_info: Option<UserInfo>,
+}
+
+pub struct UserInfo {
+    username: String,
+}
+
+const PAGE_TITLE: &str = "Kessler Dashboard";
 
 /// Renders the base HTML layout with a title and content.
-pub fn base(title: &str, content: Markup) -> Markup {
+pub fn base(global_info: GlobalInfo, content: Markup) -> Markup {
     html! {
         (PreEscaped("<!DOCTYPE html>"))
         html lang="en" {
             head {
                 meta charset="UTF-8";
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
-                title { (title) }
+                title { (PAGE_TITLE) }
                 link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
             }
             body {
@@ -17,7 +27,7 @@ pub fn base(title: &str, content: Markup) -> Markup {
                         a.navbar-brand href="/" { "Dashboard" }
                         div.collapse.navbar-collapse {
                             ul.navbar-nav.me-auto.mb-2.mb-lg-0 {
-                                li.nav-item { a.nav-link href="/admin" { "Admin" } }
+                                li.nav-item { a.nav-link href="/" { "Admin" } }
                                 li.nav-item { a.nav-link href="/logout" { "Logout" } }
                             }
                         }
@@ -33,11 +43,13 @@ pub fn base(title: &str, content: Markup) -> Markup {
 }
 
 /// Renders the full admin dashboard page.
-pub fn admin(username: &str) -> Markup {
-    base("Admin Dashboard", html! {
-        h1 { "Welcome, " (username) "!" }
-        p { "This is the admin dashboard." }
-    })
+pub fn admin_full(username: &str) -> Markup {
+    base(
+        "Admin Dashboard",
+        html! {
+            (admin_partial(username))
+        },
+    )
 }
 
 /// Renders only the admin dashboard content for HTMX partial updates.

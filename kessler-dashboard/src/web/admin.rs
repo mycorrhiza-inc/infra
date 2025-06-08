@@ -14,7 +14,7 @@ pub async fn admin(HxBoosted(boosted): HxBoosted, auth_session: AuthSession) -> 
             if boosted {
                 templates::admin_partial(&user.username).into_response()
             } else {
-                templates::admin(&user.username).into_response()
+                templates::admin_full(&user.username).into_response()
             }
         }
         None => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
