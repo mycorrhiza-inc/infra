@@ -13,6 +13,13 @@ use tokio::{signal, task::AbortHandle};
 use tower_sessions::cookie::Key;
 use tower_sessions_sqlx_store::SqliteStore;
 
+fn define_routes() -> Router {
+    Router::new()
+        .merge(admin::admin_router())
+        .merge(auth::router())
+        .layer(MessagesManagerLayer)
+}
+
 pub struct App {
     db: SqlitePool,
 }
@@ -54,12 +61,7 @@ impl App {
         let backend = Backend::new(self.db);
         let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
 
-        let app = Router::new()
-            .route("/", get(admin::admin))
-            .route_layer(login_required!(Backend, login_url = "/login"))
-            .merge(auth::router())
-            .layer(MessagesManagerLayer)
-            .layer(auth_layer);
+        let app = define_routes().layer(auth_layer);
 
         let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
