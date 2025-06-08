@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use axum_login::{AuthUser, AuthnBackend, UserId};
 use password_auth::verify_password;
 use serde::{Deserialize, Serialize};
@@ -32,9 +33,9 @@ impl AuthUser for User {
 
     fn session_auth_hash(&self) -> &[u8] {
         self.password.as_bytes() // We use the password hash as the auth
-                                 // hash--what this means
-                                 // is when the user changes their password the
-                                 // auth session becomes invalid.
+        // hash--what this means
+        // is when the user changes their password the
+        // auth session becomes invalid.
     }
 }
 
@@ -67,6 +68,7 @@ pub enum Error {
     TaskJoin(#[from] task::JoinError),
 }
 
+#[async_trait]
 impl AuthnBackend for Backend {
     type User = User;
     type Credentials = Credentials;

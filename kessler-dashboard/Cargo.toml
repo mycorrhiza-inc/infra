@@ -25,3 +25,4 @@ tower-sessions = { version = "0.14.0", default-features = false, features = [
 ] }
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["sqlite"] }
 thiserror = "2.0.0"
+async-trait = "0.1.88"
