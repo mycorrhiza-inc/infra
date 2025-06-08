@@ -19,8 +19,6 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 title { (global_info.title) }
                 link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5";
-                script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";
-                script src="https://unpkg.com/htmx.org@2.0.4";
             }
             body class="min-h-screen bg-base-200" {
                 nav class="navbar bg-base-100 shadow-lg" {
@@ -41,10 +39,15 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                     (content)
                 }
             }
+            script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";
+            script src="https://unpkg.com/htmx.org@2.0.4";
         }
     }
 }
 
+pub fn admin_full(info: &GlobalInfo) -> Markup {
+    base(info, admin_partial(info))
+}
 pub fn admin_partial(info: &GlobalInfo) -> Markup {
     let username = &info.user_info.as_ref().unwrap().username;
     html! {
