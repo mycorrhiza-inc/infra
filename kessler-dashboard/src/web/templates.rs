@@ -20,13 +20,13 @@ pub fn base(global_info: &GlobalInfo, content: Markup) -> Markup {
                 title { (global_info.title) }
                 link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5";
             }
-            body class="min-h-screen bg-base-200" {
+            body class="drawer drawer-mobile min-h-screen bg-base-200" {
                 nav class="navbar bg-base-100 shadow-lg" {
                     div class="navbar-start" {
                         a href="/" class="btn btn-ghost text-xl" { "Dashboard" }
                     }
                     div class="navbar-end" {
-                        @if let Some(_) = global_info.user_info {
+                        @if let Some(_user) = &global_info.user_info {
                             a href="/" class="btn btn-ghost" { "Admin" }
                             a href="/logout" class="btn btn-ghost" { "Logout" }
                         } @else {
