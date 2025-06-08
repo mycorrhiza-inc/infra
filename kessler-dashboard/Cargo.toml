@@ -1,15 +1,15 @@
 [package]
 name = "kessler-dashboard"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies]
-askama = { version = "0.12.1" }
-axum = "0.8.1"
+askama = { version = "0.14" }
+axum = { version = "0.8.1", features = ["macros"] }
 axum-login = "0.17.0"
 axum-messages = "0.8.0"
-axum-htmx = "0.6.0"
+axum-htmx = { version = "0.8.1", features = ["auto-vary"] }
 anyhow = "1.0"
 http = "1.0.0"
 hyper = "1.0.1"

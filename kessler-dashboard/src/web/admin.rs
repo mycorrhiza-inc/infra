@@ -1,7 +1,8 @@
 use askama::Template;
-use axum::{response::IntoResponse, response::Html, routing::get, Router};
+use axum::{Router, response::Html, response::IntoResponse, routing::get};
+
 use axum_htmx::HxBoosted;
-use axum_http::StatusCode;
+use http::StatusCode;
 
 use crate::users::AuthSession;
 
@@ -21,31 +22,28 @@ struct AdminPartialTemplate<'a> {
 
 /// Mount the /admin route
 pub fn router() -> Router<()> {
-    Router::new().route("/admin", get(get::admin))
+    Router::new().route("/admin", get(admin))
 }
 
-mod get {
-    use super::*;
-
-    pub async fn admin(
-        HxBoosted(boosted): HxBoosted,
-        auth_session: AuthSession,
-    ) -> impl IntoResponse {
-        match auth_session.user {
-            Some(user) => {
-                if boosted {
-                    let html = AdminPartialTemplate { username: &user.username }
-                        .render()
-                        .unwrap();
-                    Html(html).into_response()
-                } else {
-                    let html = AdminTemplate { username: &user.username }
-                        .render()
-                        .unwrap();
-                    Html(html).into_response()
+pub async fn admin(HxBoosted(boosted): HxBoosted, auth_session: AuthSession) -> impl IntoResponse {
+    match auth_session.user {
+        Some(user) => {
+            if boosted {
+                let html = AdminPartialTemplate {
+                    username: &user.username,
                 }
+                .render()
+                .unwrap();
+                Html(html).into_response()
+            } else {
+                let html = AdminTemplate {
+                    username: &user.username,
+                }
+                .render()
+                .unwrap();
+                Html(html).into_response()
             }
-            None => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
         }
+        None => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }

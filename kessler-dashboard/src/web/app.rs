@@ -1,5 +1,10 @@
+use crate::{
+    users::Backend,
+    web::{admin, auth, protected},
+};
 use axum;
-use axum::{Router, routing::get};
+use axum::{routing::get, Router};
+use axum_htmx::AutoVaryLayer;
 use axum_login::{
     login_required,
     tower_sessions::{ExpiredDeletion, Expiry, SessionManagerLayer},
@@ -12,11 +17,6 @@ use tokio::{signal, task::AbortHandle};
 use tower_sessions::cookie::Key;
 use tower_sessions_sqlx_store::SqliteStore;
 
-use crate::{
-    users::Backend,
-    web::{auth, protected, admin},
-};
-
 pub struct App {
     db: SqlitePool,
 }
@@ -24,7 +24,7 @@ pub struct App {
 impl App {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
         let db = SqlitePool::connect(":memory:").await?;
-        sqlx::migrate!().run(&db).await?;
+        // sqlx::migrate!("./migrations").run(&db).await?;
 
         Ok(Self { db })
     }
@@ -59,7 +59,7 @@ impl App {
         let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
 
         let app = Router::new()
-            .route("/admin", get(admin::get::admin))
+            .route("/admin", get(admin::admin))
             .merge(protected::router())
             .route_layer(login_required!(Backend, login_url = "/login"))
             .merge(auth::router())
