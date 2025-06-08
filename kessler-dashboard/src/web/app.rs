@@ -3,12 +3,11 @@ use crate::{
     web::{admin, auth, protected},
 };
 use axum;
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
 use axum_htmx::AutoVaryLayer;
 use axum_login::{
-    login_required,
+    AuthManagerLayerBuilder, login_required,
     tower_sessions::{ExpiredDeletion, Expiry, SessionManagerLayer},
-    AuthManagerLayerBuilder,
 };
 use axum_messages::MessagesManagerLayer;
 use sqlx::SqlitePool;
@@ -24,7 +23,7 @@ pub struct App {
 impl App {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
         let db = SqlitePool::connect(":memory:").await?;
-        // sqlx::migrate!("./migrations").run(&db).await?;
+        sqlx::migrate!("db/migrations").run(&db).await?;
 
         Ok(Self { db })
     }

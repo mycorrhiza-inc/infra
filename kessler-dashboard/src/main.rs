@@ -3,7 +3,8 @@
 //! ```not_rust
 //! cargo run -p example-sqlite
 //! ```
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing::info;
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::web::App;
 
@@ -18,6 +19,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )))
         .with(tracing_subscriber::fmt::layer())
         .try_init()?;
+
+    info!("Attempting to serve app");
+    println!("Attempting to serve app");
 
     App::new().await?.serve().await
 }

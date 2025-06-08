@@ -950,6 +950,7 @@ dependencies = [
  "tower",
  "tower-sessions",
  "tower-sessions-sqlx-store",
+ "tracing",
  "tracing-subscriber",
 ]
 
