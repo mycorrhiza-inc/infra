@@ -12,3 +12,4 @@ sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/do
 sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 sudo systemctl enable --now docker
+sudo systemctl start docker
