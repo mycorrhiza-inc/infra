@@ -1,4 +1,3 @@
-use askama::Template;
 use axum::{
     extract::Query,
     http::StatusCode,
@@ -10,13 +9,7 @@ use axum_messages::{Message, Messages};
 use serde::Deserialize;
 
 use crate::users::{AuthSession, Credentials};
-
-#[derive(Template)]
-#[template(path = "login.html")]
-pub struct LoginTemplate {
-    messages: Vec<Message>,
-    next: Option<String>,
-}
+use crate::web::templates;
 
 // This allows us to extract the "next" field from the query string. We use this
 // to redirect after log in.
@@ -77,14 +70,11 @@ mod get {
         messages: Messages,
         Query(NextUrl { next }): Query<NextUrl>,
     ) -> Html<String> {
-        Html(
-            LoginTemplate {
-                messages: messages.into_iter().collect(),
-                next,
-            }
-            .render()
-            .unwrap(),
-        )
+        // Convert messages to Vec<String>
+        let msgs: Vec<String> = messages.into_iter().map(|m: Message| m.to_string()).collect();
+        // Render template
+        let markup = templates::login(&msgs, &next);
+        Html(markup.into_string())
     }
 
     pub async fn logout(mut auth_session: AuthSession) -> impl IntoResponse {
