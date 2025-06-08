@@ -1,6 +1,6 @@
 use crate::{
     users::Backend,
-    web::{admin, auth, protected},
+    web::{admin, auth},
 };
 use axum;
 use axum::{Router, routing::get};
@@ -58,8 +58,7 @@ impl App {
         let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
 
         let app = Router::new()
-            .route("/admin", get(admin::admin))
-            .merge(protected::router())
+            .route("/", get(admin::admin))
             .route_layer(login_required!(Backend, login_url = "/login"))
             .merge(auth::router())
             .layer(MessagesManagerLayer)
