@@ -11,7 +11,6 @@ use crate::app::App;
 mod app;
 mod components;
 mod lib;
-mod users; // re-export of users for backwards compatibility if needed
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

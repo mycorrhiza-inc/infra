@@ -1,8 +1,8 @@
-use maud::{Markup, html};
 use crate::components::templates::global::GlobalInfo;
+use maud::{Markup, html};
 
 /// Login page template
-pub fn login(next: Option<&str>) -> Markup {
+pub fn login_html(next: Option<&str>) -> Markup {
     let info = GlobalInfo {
         title: "Login".to_string(),
         user_info: None,
@@ -40,3 +40,4 @@ pub fn login(next: Option<&str>) -> Markup {
         },
     )
 }
+

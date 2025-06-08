@@ -1,5 +1,5 @@
-use crate::users::AuthSession;
 use crate::components::templates::{self, GlobalInfo, UserInfo};
+use crate::lib::users::AuthSession;
 use axum::response::IntoResponse;
 use axum_htmx::HxBoosted;
 use http::StatusCode;

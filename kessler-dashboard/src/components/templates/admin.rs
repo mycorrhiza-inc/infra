@@ -1,5 +1,5 @@
-use maud::{Markup, html};
 use crate::components::templates::global::GlobalInfo;
+use maud::{Markup, html};
 
 /// Full admin page (wraps partial in base layout)
 pub fn admin_full(info: &GlobalInfo) -> Markup {

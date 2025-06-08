@@ -8,7 +8,6 @@ use axum::{
 use axum_messages::{Message, Messages};
 use serde::Deserialize;
 
-use crate::users::{AuthSession, Credentials};
 use crate::components::templates;
 
 // This allows us to extract the "next" field from the query string. We use this
@@ -26,6 +25,8 @@ pub fn router() -> Router<()> {
 }
 
 mod post {
+    use crate::lib::users::{AuthSession, Credentials};
+
     use super::*;
 
     pub async fn login(
@@ -64,6 +65,9 @@ mod post {
 }
 
 mod get {
+
+    use crate::{components::templates::login::login_html, lib::users::AuthSession};
+
     use super::*;
 
     pub async fn login(
@@ -76,7 +80,7 @@ mod get {
             .map(|m: Message| m.to_string())
             .collect();
         // Render template
-        let markup = templates::login(next.as_deref());
+        let markup = login_html(next.as_deref());
         Html(markup.into_string())
     }
 
