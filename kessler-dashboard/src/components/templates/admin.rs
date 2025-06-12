@@ -1,9 +1,12 @@
 use crate::components::templates::global::GlobalInfo;
 use maud::{Markup, html};
 
-/// Full admin page (wraps partial in base layout)
-pub fn admin_full(info: &GlobalInfo) -> Markup {
-    super::base(info, admin_partial(info))
+/// Generates a full or partial admin page depending on if its htmx boosted
+pub fn admin_html(info: &GlobalInfo, boosted: bool) -> Markup {
+    match boosted {
+        true => admin_partial(info),
+        false => super::base(info, admin_partial(info)),
+    }
 }
 
 /// Admin panel partial (for htmx boost)

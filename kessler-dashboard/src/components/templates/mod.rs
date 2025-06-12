@@ -7,6 +7,6 @@ pub mod global;
 pub mod login;
 
 // Re-exports for easy access
-pub use admin::{admin_full, admin_partial};
+pub use admin::admin_html;
 pub use base::base;
 pub use global::{GlobalInfo, UserInfo};

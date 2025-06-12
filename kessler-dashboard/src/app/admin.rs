@@ -25,11 +25,7 @@ pub async fn admin_homepage(
                     username: user.username,
                 }),
             };
-            if boosted {
-                templates::admin_partial(&info).into_response()
-            } else {
-                templates::admin_full(&info).into_response()
-            }
+            templates::admin_html(&info, boosted).into_response()
         }
         None => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
