@@ -1,44 +1,47 @@
 import asyncio
-import hashlib
-import hmac
 import os
-from fastapi import FastAPI, Request, HTTPException, Header, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 import subprocess
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from git import Repo, GitCommandError
 
 # --- Configuration ---
-# It's recommended to set this as an environment variable for security
-GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
 KESSLER_REPO_PATH = "/mycorrhiza/kessler"
 DOCKER_USERNAME = "fractalhuman1"
+REPO_URL = "https://github.com/mycorrhiza-inc/kessler"
 
 app = FastAPI()
+scheduler = AsyncIOScheduler()
 
 # --- Models ---
 class DeployRequest(BaseModel):
     commit: str
     environment: str  # "nightly" or "production"
 
-# --- Security ---
-async def verify_github_signature(request: Request):
+# --- Git Operations ---
+def get_repo() -> Repo:
     """
-    Verify that the webhook request is from GitHub.
-    This is disabled if GITHUB_WEBHOOK_SECRET is not set.
+    Initializes and returns a Git Repo object. Clones if it doesn't exist.
     """
-    if not GITHUB_WEBHOOK_SECRET:
-        print("Warning: GITHUB_WEBHOOK_SECRET is not set. Skipping signature verification.")
-        return
+    if not os.path.exists(KESSLER_REPO_PATH):
+        print(f"Cloning repository into {KESSLER_REPO_PATH}...")
+        Repo.clone_from(REPO_URL, KESSLER_REPO_PATH, recurse_submodules=True)
+        print("Repository cloned.")
+    return Repo(KESSLER_REPO_PATH)
 
-    signature_header = request.headers.get("X-Hub-Signature-256")
-    if not signature_header:
-        raise HTTPException(status_code=400, detail="X-Hub-Signature-256 header is missing!")
-
-    body = await request.body()
-    expected_signature = hmac.new(GITHUB_WEBHOOK_SECRET.encode(), body, hashlib.sha256).hexdigest()
-
-    if not hmac.compare_digest(f"sha256={expected_signature}", signature_header):
-        raise HTTPException(status_code=400, detail="Invalid GitHub signature.")
+def get_latest_commit_hash(repo: Repo, branch: str = 'main') -> str:
+    """
+    Fetches the latest commit hash from the remote repository.
+    """
+    try:
+        repo.remotes.origin.fetch()
+        latest_commit = repo.remotes.origin.refs[branch].commit.hexsha
+        return latest_commit
+    except GitCommandError as e:
+        print(f"Error fetching latest commit: {e}")
+        return None
 
 # --- Deployment Logic ---
 async def stream_deployment_process(commit: str, environment: str):
@@ -51,15 +54,7 @@ async def stream_deployment_process(commit: str, environment: str):
     script = f"""
     set -e
     echo "--- Starting deployment for commit {commit} to {environment} ---"
-    sudo mkdir -p {KESSLER_REPO_PATH}
-    sudo chmod 777 -R {KESSLER_REPO_PATH}
     cd {KESSLER_REPO_PATH}
-
-    if [ ! -d ".git" ]; then
-        echo "--- Cloning repository ---"
-        sudo git clone https://github.com/mycorrhiza-inc/kessler . --recurse-submodules
-        sudo git config --global --add safe.directory {KESSLER_REPO_PATH}
-    fi
 
     echo "--- Fetching latest changes and checking out commit ---"
     sudo git clean -fd
@@ -119,6 +114,31 @@ async def run_deployment_task(commit: str, environment: str):
         print(output.decode().strip())
     print(f"Finished background deployment for {commit} to {environment}")
 
+# --- Polling Logic ---
+async def poll_and_deploy():
+    """
+    Polls the git repository for new commits and triggers a nightly deployment if found.
+    """
+    print("Polling for new commits...")
+    repo = get_repo()
+    latest_commit = get_latest_commit_hash(repo)
+    
+    if latest_commit:
+        # A simple way to track the last deployed commit. 
+        # For a more robust solution, consider a small database or file.
+        last_deployed_commit_file = "/tmp/last_deployed_commit.txt"
+        last_deployed_commit = ""
+        if os.path.exists(last_deployed_commit_file):
+            with open(last_deployed_commit_file, "r") as f:
+                last_deployed_commit = f.read().strip()
+
+        if latest_commit != last_deployed_commit:
+            print(f"New commit found: {latest_commit}. Triggering nightly deployment.")
+            await run_deployment_task(latest_commit, "nightly")
+            with open(last_deployed_commit_file, "w") as f:
+                f.write(latest_commit)
+        else:
+            print("No new commits found.")
 
 # --- API Endpoints ---
 @app.post("/deploy")
@@ -132,31 +152,29 @@ async def deploy_commit(request: DeployRequest):
     
     return StreamingResponse(stream_deployment_process(request.commit, request.environment), media_type="text/plain")
 
-@app.post("/webhook")
-async def github_webhook(request: Request, background_tasks: BackgroundTasks):
-    """
-    Handles webhooks from GitHub. Triggers a nightly deployment on push to main.
-    """
-    await verify_github_signature(request)
-    
-    payload = await request.json()
-
-    if payload.get("ref") == "refs/heads/main":
-        commit_hash = payload.get("after")
-        if commit_hash:
-            print(f"New commit on main: {commit_hash}. Triggering nightly deployment.")
-            background_tasks.add_task(run_deployment_task, commit_hash, "nightly")
-            return {"message": "Nightly deployment triggered in the background."}
-
-    return {"message": "Event received, but no action taken."}
-
 @app.get("/")
 def read_root():
     return {"message": "Deployment server is running."}
 
+# --- Lifecycle Events ---
+@app.on_event("startup")
+async def startup_event():
+    """
+    On startup, add the polling job to the scheduler.
+    """
+    scheduler.add_job(poll_and_deploy, 'interval', hours=2)
+    scheduler.start()
+    # Run the job once on startup
+    await poll_and_deploy()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """
+    On shutdown, stop the scheduler.
+    """
+    scheduler.shutdown()
+
 if __name__ == "__main__":
     import uvicorn
-    # The server needs to run as root to execute docker and git with sudo
-    # and to bind to a privileged port if necessary.
-    # Running on 0.0.0.0 makes it accessible from the network.
     uvicorn.run(app, host="0.0.0.0", port=8000)
