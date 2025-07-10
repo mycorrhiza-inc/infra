@@ -6,8 +6,11 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
+# pull dependencies from infra repo
+git pull
+
 # Install dependencies
 uv sync
 
 # Run the server as root
-uv run --host 0.0.0.0 --port 8000
+uv run main.py --host 0.0.0.0 --port 8000

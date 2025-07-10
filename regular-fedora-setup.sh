@@ -7,8 +7,10 @@ fi
 
 sudo dnf install git fish neovim -y
 
+sudo dnf copr enable atim/lazygit -y
 sudo dnf copr enable varlad/zellij -y
 sudo dnf install zellij -y
+sudo dnf install lazygit -y
 
 sudo dnf -y install dnf-plugins-core
 sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
