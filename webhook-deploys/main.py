@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
@@ -170,22 +171,11 @@ def read_root():
 
 
 # --- Lifecycle Events ---
-@app.on_event("startup")
-async def startup_event():
-    """
-    On startup, add the polling job to the scheduler.
-    """
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     scheduler.add_job(poll_and_deploy, "interval", hours=2)
     scheduler.start()
-    # Run the job once on startup
-    # await poll_and_deploy()
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    On shutdown, stop the scheduler.
-    """
+    yield
     scheduler.shutdown()
 
 
