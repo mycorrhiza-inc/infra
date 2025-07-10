@@ -10,4 +10,5 @@ dependencies = [
     "uvicorn>=0.35.0",
     "apscheduler>=3.10.4",
     "GitPython>=3.1.43",
+    "asyncio>=3.4.3",
 ]

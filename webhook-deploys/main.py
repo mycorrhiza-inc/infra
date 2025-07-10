@@ -15,10 +15,12 @@ REPO_URL = "https://github.com/mycorrhiza-inc/kessler"
 app = FastAPI()
 scheduler = AsyncIOScheduler()
 
+
 # --- Models ---
 class DeployRequest(BaseModel):
     commit: str
     environment: str  # "nightly" or "production"
+
 
 # --- Git Operations ---
 def get_repo() -> Repo:
@@ -31,7 +33,8 @@ def get_repo() -> Repo:
         print("Repository cloned.")
     return Repo(KESSLER_REPO_PATH)
 
-def get_latest_commit_hash(repo: Repo, branch: str = 'main') -> str:
+
+def get_latest_commit_hash(repo: Repo, branch: str = "main") -> str:
     """
     Fetches the latest commit hash from the remote repository.
     """
@@ -41,7 +44,8 @@ def get_latest_commit_hash(repo: Repo, branch: str = 'main') -> str:
         return latest_commit
     except GitCommandError as e:
         print(f"Error fetching latest commit: {e}")
-        return None
+        return ""
+
 
 # --- Deployment Logic ---
 async def stream_deployment_process(commit: str, environment: str):
@@ -85,25 +89,24 @@ async def stream_deployment_process(commit: str, environment: str):
     """
 
     process = await asyncio.create_subprocess_shell(
-        script,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        script, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
 
     # Stream stdout
-    while True:
-        line = await process.stdout.readline()
-        if not line:
-            break
-        yield line
+    # while True:
+    #     line = await process.stdout.readline()
+    #     if not line:
+    #         break
+    #     yield line
 
     # Wait for the process to finish and capture any errors
     stdout, stderr = await process.communicate()
-    
+
     if process.returncode != 0:
         error_message = stderr.decode() if stderr else "An unknown error occurred."
         yield f"--- ERROR ---\n{error_message}"
         yield f"--- PROCESS FAILED WITH EXIT CODE {process.returncode} ---"
+
 
 async def run_deployment_task(commit: str, environment: str):
     """
@@ -111,8 +114,9 @@ async def run_deployment_task(commit: str, environment: str):
     """
     print(f"Starting background deployment for {commit} to {environment}")
     async for output in stream_deployment_process(commit, environment):
-        print(output.decode().strip())
+        print(output.strip())
     print(f"Finished background deployment for {commit} to {environment}")
+
 
 # --- Polling Logic ---
 async def poll_and_deploy():
@@ -122,9 +126,9 @@ async def poll_and_deploy():
     print("Polling for new commits...")
     repo = get_repo()
     latest_commit = get_latest_commit_hash(repo)
-    
+
     if latest_commit:
-        # A simple way to track the last deployed commit. 
+        # A simple way to track the last deployed commit.
         # For a more robust solution, consider a small database or file.
         last_deployed_commit_file = "/tmp/last_deployed_commit.txt"
         last_deployed_commit = ""
@@ -140,6 +144,7 @@ async def poll_and_deploy():
         else:
             print("No new commits found.")
 
+
 # --- API Endpoints ---
 @app.post("/deploy")
 async def deploy_commit(request: DeployRequest):
@@ -148,13 +153,21 @@ async def deploy_commit(request: DeployRequest):
     Streams the deployment output back to the client.
     """
     if request.environment not in ["nightly", "production"]:
-        raise HTTPException(status_code=400, detail="Invalid environment. Must be 'nightly' or 'production'.")
-    
-    return StreamingResponse(stream_deployment_process(request.commit, request.environment), media_type="text/plain")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid environment. Must be 'nightly' or 'production'.",
+        )
+
+    return StreamingResponse(
+        stream_deployment_process(request.commit, request.environment),
+        media_type="text/plain",
+    )
+
 
 @app.get("/")
 def read_root():
     return {"message": "Deployment server is running."}
+
 
 # --- Lifecycle Events ---
 @app.on_event("startup")
@@ -162,7 +175,7 @@ async def startup_event():
     """
     On startup, add the polling job to the scheduler.
     """
-    scheduler.add_job(poll_and_deploy, 'interval', hours=2)
+    scheduler.add_job(poll_and_deploy, "interval", hours=2)
     scheduler.start()
     # Run the job once on startup
     await poll_and_deploy()
@@ -175,6 +188,8 @@ async def shutdown_event():
     """
     scheduler.shutdown()
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
