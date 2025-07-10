@@ -21,3 +21,5 @@ sudo systemctl start docker
 
 # On macOS and Linux.
 curl -LsSf https://astral.sh/uv/install.sh | sudo sh
+
+chsh -s /usr/bin/fish

@@ -178,7 +178,7 @@ async def startup_event():
     scheduler.add_job(poll_and_deploy, "interval", hours=2)
     scheduler.start()
     # Run the job once on startup
-    await poll_and_deploy()
+    # await poll_and_deploy()
 
 
 @app.on_event("shutdown")
